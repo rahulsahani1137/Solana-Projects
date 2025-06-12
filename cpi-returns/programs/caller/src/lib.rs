@@ -9,11 +9,65 @@ declare_id!("BBzvzW6cFCPuyQwjyE4wUvHkUGw7vziU9ZCUti1rCqyB");
 pub mod caller {
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        msg!("Greetings from: {:?}", ctx.program_id);
+    #[derive(AnchorSerialize, AnchorDeserialize)]
+    pub struct Struct {
+        pub a: u64,
+        pub b: u64,
+    }
+
+    pub fn cpi_call_return_u64(ctx: Context<CpiReturnContext>) -> Result<()> {
+        let cpi_program = ctx.accounts.cpi_return_program.to_account_info();
+        let cpi_accounts = CpiReturn {
+            account: ctx.accounts.cpi_return.to_account_info(),
+        };
+        let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
+        let result = callee::cpi::return_u64(cpi_ctx)?;
+        let solana_return = result.get();
+        anchor_lang::solana_program::log::sol_log_data(&[&solana_return.try_to_vec().unwrap()]);
         Ok(())
+    }
+
+    pub fn cpi_call_return_struct(ctx: Context<CpiReturnContext>) -> Result<()> {
+        let cpi_program = ctx.accounts.cpi_return_program.to_account_info();
+        let cpi_accounts = CpiReturn {
+            account: ctx.accounts.cpi_return.to_account_info(),
+        };
+        let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
+        let result = callee::cpi::return_struct(cpi_ctx)?;
+        let solana_return = result.get();
+        anchor_lang::solana_program::log::sol_log_data(&[&solana_return.try_to_vec().unwrap()]);
+        Ok(())
+    }
+    
+     pub fn cpi_call_return_vec(ctx: Context<CpiReturnContext>) -> Result<()> {
+        let cpi_program = ctx.accounts.cpi_return_program.to_account_info();
+        let cpi_accounts = CpiReturn {
+            account: ctx.accounts.cpi_return.to_account_info(),
+        };
+        let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
+        let result = callee::cpi::return_vec(cpi_ctx)?;
+        let solana_return = result.get();
+        anchor_lang::solana_program::log::sol_log_data(&[&solana_return.try_to_vec().unwrap()]);
+        Ok(())
+    }
+
+    pub fn return_u64(_ctx: Context<CpiReturnContext>) -> Result<u64> {
+        Ok(99)
+    }
+
+    pub fn return_struct(_ctx: Context<CpiReturnContext>) -> Result<Struct> {
+        Ok(Struct { a: 1, b: 2 })
+    }
+
+    pub fn return_vec(_ctx: Context<CpiReturnContext>) -> Result<Vec<u64>> {
+        Ok(vec![1, 2, 3])
     }
 }
 
+
 #[derive(Accounts)]
-pub struct Initialize {}
+pub struct CpiReturnContext<'info> {
+    #[account(mut)]
+    pub cpi_return: Account<'info, CpiReturnAccount>,
+    pub cpi_return_program: Program<'info, Callee>,
+}
