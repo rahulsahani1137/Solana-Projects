@@ -17,5 +17,5 @@ no-log-ix-name = []
 idl-build = ["anchor-lang/idl-build"]
 
 [dependencies]
-anchor-lang = { path = "../../../../lang", features = ["init-if-needed"] }
+anchor-lang = "0.31.1"
 callee = { path = "../callee", features = ["cpi"] }

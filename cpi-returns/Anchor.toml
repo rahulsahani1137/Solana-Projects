@@ -3,17 +3,17 @@
 [features]
 resolution = true
 skip-lint = false
+seeds = false
 
 [programs.localnet]
 callee = "E99XSKNk4C1F7ZvkxwdswpNHqAqnTK4pMKc8TxMxBhDi"
 caller = "BBzvzW6cFCPuyQwjyE4wUvHkUGw7vziU9ZCUti1rCqyB"
-cpi_returns = "AdKoH5HDsxcVDje1cCM6Z6D7qWYR7MZfDKtCkL15m3Jp"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "Localnet"
+cluster = "localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
